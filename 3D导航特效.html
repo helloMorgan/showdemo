@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0px;
+				padding: 0px;
+				font-family: "微软雅黑";
+				font-weight: 900;
+				outline: none;
+			}
+			
+			*::selection {
+				background-color: red;
+			}
+			
+			a {
+				text-decoration: none;
+			}
+			
+			ul {
+				list-style: none;
+			}
+			
+			.container {
+				width: 1200px;
+				margin: 0 auto;
+				padding: 30px 0px;
+			}
+			
+			header {
+				width: 100%;
+				height: 60px;
+			}
+			
+			header ul {
+				width: 100%;
+				height: 60px;
+			}
+			
+			header ul li:nth-of-type(1) {
+				border-left: 1px solid #fff;
+			}
+			
+			header ul li {
+				box-sizing: border-box;
+				width: calc(100% / 8);
+				height: 60px;
+				float: left;
+				border-right: 1px solid #fff;
+				position: relative;
+			/*	overflow: ;*/
+				transition: all 0.5 ease;
+			}
+			/*3D容器*/
+			
+			header ul li .slidedown {
+				width: 100%;
+				height: 60px;
+				position: relative;
+				transition: all 0.3s ease;
+				perspective: 0px;
+				-moz-perspective: 0px;
+				-webkit-perspective: 0px;
+				transform-style: preserve-3d;
+				-webkit-transform-style: preserve-3d;
+				-moz-transform-style: preserve-3d;
+				perspective-origin: left 100%;
+				-webkit-perspective-origin: left 100%;
+				-moz-perspective-origin: left 100%;
+			}
+			/*3D容器结束*/
+			/*3D组件*/
+			
+			header ul li span {
+				cursor: pointer;
+				display: block;
+				position: absolute;
+				background: black;
+				top: 0px;
+				left: 0px;
+				width: 100%;
+				height: 60px;
+				text-align: center;
+				color: white;
+				line-height: 60px;
+			}
+			
+			header ul li span.s2 {
+				transform: translatez(30px);
+				-webkit-transform: translatez(30px);
+				-moz-transform: translatez(30px);
+			}
+			
+			header ul li span.s1 {
+				background:red;
+				transform: rotateX(90deg) translatez(30px);
+				-webkit-transform: rotateX(90deg) translatez(30px);
+				-moz-transform: rotateX(90deg) translatez(30px);
+			}
+			
+			header ul li:hover .slidedown {
+				transform: rotateX(-90deg);
+				-webkit-transform: rotateX(-90deg);
+				-moz-transform: rotateX(-90deg);
+			}
+			/*3D结束*/
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<header>
+				<ul>
+					<li>
+						<div class="slidedown">
+							<span class="s1">HTML</span>
+							<span class="s2">HTML</span>
+						</div>
+					</li>
+					<li>
+						<div class="slidedown">
+							<span class="s1">CSS</span>
+							<span class="s2">CSS</span>
+						</div>
+					</li>
+					<li>
+						<div class="slidedown">
+							<span class="s1">JAVASCRIPT</span>
+							<span class="s2">JAVASCRIPT</span>
+						</div>
+					</li>
+					<li>
+						<div class="slidedown">
+							<span class="s1">BootStrap</span>
+							<span class="s2">BootStrap</span>
+						</div>
+					</li>
+					<li>
+						<div class="slidedown">
+							<span class="s1">JQuery</span>
+							<span class="s2">JQuery</span>
+						</div>
+					</li>
+					<li>
+						<div class="slidedown">
+							<span class="s1">Node.js</span>
+							<span class="s2">Node.js</span>
+						</div>
+					</li>
+					<li>
+						<div class="slidedown">
+							<span class="s1">PHP</span>
+							<span class="s2">PHP</span>
+						</div>
+					</li>
+					<li>
+						<div class="slidedown">
+							<span class="s1">JAVA</span>
+							<span class="s2">JAVA</span>
+						</div>
+					</li>
+				</ul>
+			</header>
+		</div>
+	</body>
+
+</html>
