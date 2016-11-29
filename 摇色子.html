@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title>中秋博饼</title>
+    <script type="text/javascript" src="http://smc2.e3322.com/SMC2.0/html/phone/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="http://smc2.e3322.com/SMC2.0/html/phone/js/jquery.timers-1.2.js"></script>
+    <style>
+        body {
+            width: 375px;
+            height: 667px;
+            margin: 0 auto;
+        }
+        .canvasBg {
+            display: block;
+            background: url(http://smc2.e3322.com/SMC2.0/html/phone/images/moonCake/carnivalBall.png) no-repeat;
+            background-size: 100% 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+        .dice_canvas{
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -110px;
+            margin-left: -110px;
+        }
+        #audio {
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            left: -9999px;
+            top: -9999px;
+        }
+        .ballBtn {
+            width: 159px;
+            height: 45px;
+            line-height: 45px;
+            background: #ff5420;
+            text-align: center;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 17px;
+            margin: 3px auto 0 auto;
+        }
+        .blackbgs {
+            background: rgba(0, 0, 0, 0.3) none repeat scroll 0 0;
+            display: none;
+            height: 100%;
+            left: 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1001;
+        }
+        .resultDiceBg { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1003;}
+        .resultDiceBg .resultDice { width: 100%; height: 100%; position: relative;}
+        .resultDiceBg .resultDice .resultShow { position: fixed; left: 50%; top: 10px; width: 290px; height: 290px; padding: 55px 35px 15px 35px; margin-left: -180px; background: url(http://smc2.e3322.com/SMC2.0/html/phone/images/moonCake/result.png) no-repeat; background-size: 100% auto;}
+        .resultDiceBg .resultDice .resultShow .resultShow_tit { margin-top: 35px; text-align: center; font-size: 36px; color: #ff3428;}
+        .resultDiceBg .resultDice .resultShow .resultShow_dice { margin-top: 15px; text-align: center;}
+        .resultDiceBg .resultDice .resultShow .resultShow_dice img { display: inline-block; width: 26px; height: 26px; margin-right: 7px;}
+        .resultDiceBg .resultDice .resultShow .resultShow_cf { font-size: 20px; color: #902a13; margin-top: 15px; text-align: center; padding-bottom: 15px;}
+        .resultDiceBg .resultDice .resultShow .resultShow_button { width: 38px; height: 42px; padding: 11px 13px; line-height: 20px; border: 2px solid #ffd42d; background: #ffb616; color: #fff; font-size: 18px; border-radius: 50%; margin: 0 auto;}
+    </style>
+</head>
+<body>
+<div class="moonCakeCarnival moonCakeIphoneHead">
+    <div class="carnivalBottom">
+        <div class="bowl canvasBg">
+            <audio id="audio" class="audio" src="" controls="controls" loop="loop">亲 您的浏览器不支持html5的audio标签</audio>
+            <canvas id="dice_canvas" class="dice_canvas"  width="220px" height="220px"></canvas>
+        </div>
+    </div>
+    <div class="carnivalMiddle clearfix">
+        <div class="ballBtn clickShake">摇一摇/搏一把</div>
+    </div>
+</div>
+<div class="resultDiceBg">
+    <div class="resultDice">
+        <div class="resultShow">
+            <div class="resultShow_tit"><!--对堂--></div>
+            <div class="resultShow_dice">
+
+            </div>
+            <div class="resultShow_cf"><!--本周跑10000步--></div>
+            <div class="resultShow_button">再来一次</div>
+        </div>
+    </div>
+</div>
+<div class="blackbgs"></div>
+<script type="text/javascript">
+    var spaceArrayDice = new Array();
+    var spaceArrayNUM = new Array();
+
+    var dice_canvas = document.getElementById('dice_canvas');
+    var ctx = dice_canvas.getContext("2d");
+    var diceInitial  = [{x: 90,y:60},{x: 50,y:84},{x: 80,y:125},{x: 130,y:70},{x: 42,y:128},{x: 136,y:120}];
+    var flag = true;
+    var widthPx = 375-20;
+    var widthSh = 375*0.8;
+    $(".canvasBg").width(widthPx);
+    $(".canvasBg").height(widthPx);
+    $(".clickShake").on("click",function(){
+        if(flag){
+            flag = false;
+            audio(true);
+            spaceArrayDice = [];
+            spaceArrayNUM = [];
+            start();
+            initial();
+        }
+    });
+
+
+
+    function dice(x,y){
+//        console.log("x="+x+"&y="+y);
+        var isClickBall = false;
+        if (!isClickBall) {
+            var redBall = new throwDice(x,y,2);
+            spaceArrayDice.push(redBall);
+            var timer = window.setInterval("spaceArrayDice[" + (spaceArrayDice.length-1) + "].move()",30);
+            spaceArrayDice[spaceArrayDice.length-1].timer = timer;
+        }
+    };
+    function flashMap() {
+        ctx.clearRect(0,0,220,220);
+        spaceArrayNUM = [];
+        spaceArrayDice.forEach(function(ball) {
+//            console.log("t="+t);
+            var num = parseInt(Math.random()*(7-1)+1);
+            spaceArrayNUM.push(num);
+//            console.log("x="+ball.x+"&y="+ball.y+"&num="+num);
+            drawDice(ctx, ball,num);
+            ball.ramWall(dice_canvas);//撞墙
+            ball.ramBall(spaceArrayDice);//骰子相撞
+        });
+    }
+    function initial(){
+        diceInitial.forEach(function(item,index,array){
+            dice(array[index].x,array[index].y);
+        })
+    }
+    diceInitial.forEach(function(item){
+        var num = parseInt(Math.random()*(7-1)+1);
+        drawDice(ctx,item,num);
+    });
+
+    //持续时间
+    function start(){
+        var regCount = 40;
+        if(regCount>0){
+            regTimes=setInterval(function(){
+                flashMap();
+               if(regCount<0){
+                    spaceArrayDice.forEach(function(ball) {
+                        if (ball.live) {
+                            ball.live = false;
+                        }
+                    });
+                    clearInterval(regTimes);
+                    audio(false);
+                    setTimeout(function(){
+                        var sumJf = cultRes(spaceArrayNUM);
+                        falshResult(sumJf);
+                    },0);
+                }
+                regCount--;
+            },50);
+        }
+    }
+
+    function falshResult(e){
+        $(".resultShow_cf").html(e+"分");
+        $(".blackbgs").show();
+        $(".resultDiceBg").show();
+        flag = true;
+    }
+    $(".resultShow_button").on("click",function(){
+        $(".blackbgs").hide();
+        $(".resultDiceBg").hide();
+        spaceArrayDice = [];
+        spaceArrayNUM = [];
+    })
+    function throwDice(x, y, k, b) {
+        this.x = x;
+        this.y = y;
+        this.k = k;
+        this.b = y - k * x;
+        this.oldX = x;
+        this.oldY = y;
+        this.speed = 1;
+        this.r = 10;
+        this.live = true;
+        this.timer = null;
+        this.mouseMove = false;
+        this.marke = 1;
+        //移动
+        this.move = function() {
+            if (this.live && !this.mouseMove) {
+                this.oldX = this.x;
+                this.oldY = this.y;
+                this.x += this.speed;
+                this.y = this.k * this.x + this.b;
+//            console.log("this.x="+this.x+"&this.y="+this.y);
+//            console.log(444);
+            }else{
+                console.log(555);
+                window.clearInterval(this.timer);
+            }
+        }
+        //停止
+        this.stay = function() {
+            this.x = this.oldX;
+            this.y = this.oldY;
+        }
+        //撞墙
+        this.ramWall = function(canvas) {
+            if (this.live) {
+//            console.log("this.y="+this.y+"&this.r="+this.r+"&canvas.height="+canvas.height);
+                if (this.y + this.r >= (canvas.height-80) || this.y - this.r <= 40) {
+                    this.stay();
+                    if (!this.mouseMove) {
+                        this.k = -this.k;
+                        this.b = this.y-(this.x * this.k);
+                        this.move();
+                    }
+                }
+//            console.log("this.x="+this.x+"&this.r="+this.r+"&canvas.width="+canvas.width);
+                if (this.x + this.r >= (canvas.width-60) || this.x - this.r <= 40) {
+                    this.stay();
+                    if (!this.mouseMove) {
+                        this.speed = -this.speed;
+                        this.k = -this.k;
+                        this.b = this.y-(this.x * this.k);
+                        this.move();
+                    }
+                }
+            }
+        }
+        //骰子相撞
+        this.ramBall = function(balls) {
+            if (this.live) {
+                var thisBall = this;
+                balls.forEach(function(ball) {
+                    if (ball.live) {
+                        if (thisBall.x === ball.x && thisBall.y === ball.y) {
+                            return false;
+                        }
+                        var a = thisBall.x - ball.x;
+                        var b = thisBall.y - ball.y;
+                        var d = thisBall.r + ball.r;
+                        if (a * a + b * b <= d * d) {
+                            thisBall.stay();
+                            ball.stay();
+                            thisBall.speed = -thisBall.speed;
+                            ball.speed = -ball.speed;
+                            thisBall.move();
+                            ball.move();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    //画骰子
+    function drawDice(ctx, ball, num) {
+    console.log("num="+num);
+        preImage("http://smc2.e3322.com/SMC2.0/html/phone/images/moonCake/d"+num+".png",function(){
+            ctx.drawImage(this,ball.x,ball.y,30,30);
+        });
+    }
+    //骰子图片
+    function preImage(url,callback){
+        var img = new Image(); //创建一个Image对象，实现图片的预下载
+        img.src = url;
+
+        if (img.complete) { // 如果图片已经存在于浏览器缓存，直接调用回调函数
+            callback.call(img);
+            return; // 直接返回，不用再处理onload事件
+        }
+
+        img.onload = function () { //图片下载完毕时异步调用callback函数。
+            callback.call(img);//将回调函数的this替换为Image对象
+        };
+    }
+
+    //音频
+    function audio(flag){
+        var audio = document.getElementById("audio");
+        audio.src = "http://smc2.e3322.com/SMC2.0/html/phone/images/moonCake/zq_yao.mp3";
+        if (flag) {
+            audio.play();//开始播放
+        } else {
+            audio.pause();
+        }
+    };
+
+
+    //统计结果
+    function cultRes(e){
+        var sc = 0;
+        //计算各个数字有多少
+        var nums = [0,0,0,0,0,0];
+        var str = "";
+        $(".resultShow_dice").html("");
+        e.forEach(function(item){
+            if(item==1){
+                nums[0]+=1;
+            }else if(item==2){
+                nums[1]+=1;
+            }else if(item==3){
+                nums[2]+=1;
+            }else if(item==4){
+                nums[3]+=1;
+            }else if(item==5){
+                nums[4]+=1;
+            }else if(item==6){
+                nums[5]+=1;
+            }
+            str+='<img src="http://smc2.e3322.com/SMC2.0/html/phone/images/moonCake/detDice'+item+'_icon.png">';
+        })
+        $(".resultShow_dice").html(str);
+//        console.log("nums="+nums);
+
+
+        if(nums[3]==4&&nums[0]==2){
+            $(".resultShow_tit").html("状元插金花");
+            sc = 32;
+        }else if(nums[3]==6){
+            $(".resultShow_tit").html("满堂红");
+            sc = 32;
+        }else if(nums[0]==6){
+            $(".resultShow_tit").html("遍地锦");
+            sc = 32;
+        }else if(nums[1]==6||nums[2]==6||nums[4]==6||nums[5]==6){
+            $(".resultShow_tit").html("六博黑");
+            sc = 32;
+        }else if(nums[3]==5){
+            $(".resultShow_tit").html("五王");
+            sc = 32;
+        }else if(nums[0]==5||nums[1]==5||nums[2]==5||nums[4]==5||nums[5]==5){
+            $(".resultShow_tit").html("五子登科");
+            sc = 32;
+        }else if(nums[3]==4){
+            $(".resultShow_tit").html("状元");
+            sc = 32;
+        }else if(nums[0]>0&&nums[1]>0&&nums[2]>0&&nums[3]>0&&nums[4]>0&&nums[5]>0){
+            $(".resultShow_tit").html("对堂");
+            sc = 16;
+        }else if(nums[3]==3){
+            $(".resultShow_tit").html("三红");
+            sc = 8;
+        }else if(nums[0]==4||nums[1]==4||nums[2]==4||nums[4]==4||nums[5]==4){
+            $(".resultShow_tit").html("四进");
+            sc = 4;
+        }else if(nums[3]==2){
+            $(".resultShow_tit").html("二举");
+            sc = 2;
+        }else if(nums[3]==1){
+            $(".resultShow_tit").html("一秀");
+            sc = 1;
+        }else{
+            $(".resultShow_tit").html("加油哦");
+        }
+        return sc;
+    }
+
+
+</script>
+</body>
+</html>
